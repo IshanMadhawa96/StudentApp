@@ -1,7 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using StudentApp.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Depandancy Injection for Db Context
+builder.Services.AddDbContext<ApplicationDbContext>(options=> options.UseSqlServer(
+           builder.Configuration.GetConnectionString("DefaultConnection")
+));
 
 var app = builder.Build();
 
