@@ -33,6 +33,8 @@ namespace StudentApp.Models
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string StudentEmail { get; set; }
         // setting record created date time 
+        [Display(Name = "Created at")]
+        [DisplayFormat(DataFormatString ="{0:MMM-dd-yy}")]
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
     }
 }
