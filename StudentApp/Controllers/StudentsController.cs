@@ -112,6 +112,41 @@ namespace StudentApp.Controllers
         {
             return (_context.Student?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        // view Student Deaild
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _context.Student == null)
+            {
+                return NotFound();
+            }
+
+            var student = await _context.Student
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            return View(student);
+        }
+        //Delete Students
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || _context.Student == null)
+            {
+                return NotFound();
+            }
+
+            var student = await _context.Student
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            return View(student);
+        }
     }    
 
 }
