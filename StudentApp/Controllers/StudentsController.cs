@@ -10,10 +10,13 @@ using StudentApp.Models;
 
 namespace StudentApp.Controllers
 {
-    public class StudentsController : Controller
+    public class StudentsController : Controller //inherting framework class controller
     {
+
+        // passing db conex instance via DI
         private readonly ApplicationDbContext _context;
 
+        // constructor
         public StudentsController(ApplicationDbContext context)
         {
             _context = context;
