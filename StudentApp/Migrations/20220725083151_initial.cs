@@ -15,11 +15,11 @@ namespace StudentApp.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StudentName = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    StudentName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     StudentAge = table.Column<int>(type: "int", nullable: false),
                     StudentAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StudentPhone = table.Column<int>(type: "int", nullable: false),
-                    StudentEmail = table.Column<int>(type: "int", nullable: false),
+                    StudentEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

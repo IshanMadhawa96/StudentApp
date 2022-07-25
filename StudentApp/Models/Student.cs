@@ -11,11 +11,12 @@ namespace StudentApp.Models
         [Display(Name = "Student Name")]
         [Required(ErrorMessage = "Student Name is Required")]
         [Column(TypeName = "nvarchar(20)")] // give table column  length and type
+        [StringLength(20, MinimumLength = 3, ErrorMessage = "Student Name must be between 3 and 20 chars")]
         public string StudentName { get; set; }
 
         [Display(Name = "Student Age")]
         [Required(ErrorMessage = "Student Age is Required")]
-        [Range(1, 120, ErrorMessage = "Age must be between 1-120 in years.")]
+        [Range(5, 25, ErrorMessage = "Age must be between 5-25 in years.")]
         public int StudentAge { get; set; }
 
         [Display(Name = "Student Address")]
@@ -23,14 +24,14 @@ namespace StudentApp.Models
         public string StudentAddress { get; set; }
 
         [Display(Name = "Student Phone")]
-        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Not a valid phone number")]
         [Required(ErrorMessage = "Student Phone is Required")]
+        //[RegularExpression(@"^([0-9]{10})$", ErrorMessage = "Invalid Phone Number.")]
         public int StudentPhone { get; set; }
 
         [Display(Name = "Student Email")]
         [Required(ErrorMessage = "Student Email is Required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
-        public int StudentEmail { get; set; }
+        public string StudentEmail { get; set; }
         // setting record created date time 
         public DateTime CreatedDateTime { get; set; } = DateTime.Now;
     }

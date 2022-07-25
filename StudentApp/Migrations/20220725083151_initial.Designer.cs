@@ -12,7 +12,7 @@ using StudentApp.Data;
 namespace StudentApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220725044159_initial")]
+    [Migration("20220725083151_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,11 +42,13 @@ namespace StudentApp.Migrations
                     b.Property<int>("StudentAge")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudentEmail")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StudentName")
                         .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("StudentPhone")
