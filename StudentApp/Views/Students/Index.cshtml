@@ -4,32 +4,35 @@
     ViewData["Title"] = "List of Students";
 }
 
-<h1>Index</h1>
+<h2 class="text-info pt-5">View all Student</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-info float-end text-white">Add New Student</a>
+    <a asp-action="Create" class="btn btn-success float-end text-white mx-4">Upload CSV</a>
 </p>
-<table class="table">
+<table class="table table-striped py-4">
     <thead>
         <tr>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.StudentName)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.StudentAge)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.StudentAddress)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.StudentPhone)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.StudentEmail)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.CreatedDateTime)
             </th>
+            <th></th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -59,9 +62,13 @@
                         @Html.DisplayFor(modelItem => item.CreatedDateTime)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning text-white">Edit</a> 
+                    </td> 
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary text-white">Details</a>
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger text-white">Delete</a>
                     </td>
                 </tr>           
         }

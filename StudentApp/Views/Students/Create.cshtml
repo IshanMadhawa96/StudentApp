@@ -1,15 +1,15 @@
 ﻿@model StudentApp.Models.Student
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add new Student";
 }
 
-<h1>Create</h1>
 
-<h4>Student</h4>
-<hr />
-<div class="row">
+<div class="d-flex flex-column justify-content-center align-items-center">
+     <h2 class="text-info">Add new Student</h2>
     <div class="col-md-4">
+
+        <hr />
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -38,16 +38,18 @@
                 <span asp-validation-for="StudentEmail" class="text-danger"></span>
             </div>
             
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-group d-flex flex-row justify-content-between pt-3">
+                <input type="submit" value="Create" class="btn btn-primary col-5 " />
+                <a asp-action="Index" class="btn btn-dark col-5 ">Back to List</a>
+            </div>
+            <div>
+                
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

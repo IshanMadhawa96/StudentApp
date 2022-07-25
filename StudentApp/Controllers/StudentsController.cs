@@ -38,7 +38,7 @@ namespace StudentApp.Controllers
          */
         public async Task<IActionResult> Index()
         {
-            var data = await _context.Student.OrderByDescending(s=>s.CreatedDateTime).ToListAsync();
+            var data = await _context.Student.OrderByDescending(s => s.CreatedDateTime).ToListAsync();
             return View(data);
         }
 
@@ -54,12 +54,64 @@ namespace StudentApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                student.CreatedDateTime = DateTime.Now; 
+                student.CreatedDateTime = DateTime.Now;
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(student);
         }
-    }   
+        //get specific Students data to views  for edit
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null || _context.Student == null)
+            {
+                return NotFound();
+            }
+
+            var student = await _context.Student.FindAsync(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+            return View(student);
+        }
+        //update actions
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,StudentName,StudentAge,StudentAddress,StudentPhone,StudentEmail")] Student student)
+        {
+            if (id != student.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(student);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StudentExists(student.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(student);
+        }
+        private bool StudentExists(int id)
+        {
+            return (_context.Student?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+    }    
+
 }
