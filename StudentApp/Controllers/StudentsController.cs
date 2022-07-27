@@ -6,27 +6,21 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 using CsvHelper;
 using CsvHelper.Configuration;
+using CsvHelper.Configuration.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using StudentApp.Data;
 using StudentApp.Models;
+using ConfigurationManager = System.Configuration.ConfigurationManager;
 
 namespace StudentApp.Controllers
 {
-    public class CSVSTUDENT
-    {
-        
-        public string StudentName { get; set; }
-        public int StudentAge { get; set; }
-        public string StudentAddress { get; set; }
-        public int StudentPhone { get; set; }
-        public string StudentEmail { get; set; }
-        public DateTime CreatedDateTime { get; set; }
-    }
+ 
     public class StudentsController : Controller //inherting framework class controller
     {
         //IN MICROSOFT DOCUMENTATION 
@@ -184,37 +178,100 @@ namespace StudentApp.Controllers
         }
         //CSV FILE HANDELING
         [HttpPost]
-        public async Task<IActionResult> Index(IFormFile postedFile)
+        public async Task<IActionResult> Index(IFormFile postedFile,Student student)
         {
             string webRootPath = _webHostEnvironment.WebRootPath;
             string contentRootPath = _webHostEnvironment.ContentRootPath;
             var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "csv", postedFile.FileName);
             using var fileStream = new FileStream(filePath, FileMode.Create);
-            
             await postedFile.CopyToAsync(fileStream);
             fileStream.Close();
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                HasHeaderRecord = false,
-                
-            };
-            using (var reader = new StreamReader(filePath))
-            
-            using (var csv = new CsvReader(reader, config))
-            {
-               
-                //csv.Configuration.HeaderValidated = null;
-                var record = csv.GetRecords<CSVSTUDENT>().ToArray();
-                await _context.AddRangeAsync(record);
-                await _context.SaveChangesAsync();
-                /*_context.Add(student);
-                await _context.SaveChangesAsync();*/
-            }
-           
-           
-            return RedirectToAction(nameof(Index));
-        }
+            DataTable dt = new DataTable();
+            dt.Columns.AddRange(new DataColumn[5] { 
+                                /*new DataColumn("Id", typeof(int)),*/
+                                new DataColumn("StudentName", typeof(string)),
+                                new DataColumn("StudentAge"),
+                                new DataColumn("StudentAddress",typeof(string)),
+                                new DataColumn("StudentPhone"),
+                                new DataColumn("StudentEmail",typeof(string)),
+                               
+            });
+            string csvData = System.IO.File.ReadAllText(filePath);
 
-       
-    }   
-}
+            //Execute a loop over the rows.
+            foreach (string row in csvData.Split('\n'))
+            {
+                if (!string.IsNullOrEmpty(row))
+                {
+                    dt.Rows.Add();
+                    int i = 0;
+
+                    //Execute a loop over the columns.
+                    foreach (string cell in row.Split(','))
+                    {
+                        dt.Rows[dt.Rows.Count - 1][i] = cell;
+                        i++;
+                    }
+                }
+            }
+
+
+            /* string conString = "Server=(local)\\sqlexpress;Database=StudentDB;Trusted_Connection=True;";
+             using (SqlConnection con = new SqlConnection(conString))
+             {
+                 using (SqlBulkCopy sqlBulkCopy = new SqlBulkCopy(con))
+                 {
+                     //Set the database table name.
+                     sqlBulkCopy.DestinationTableName = "Student";
+
+                     //[OPTIONAL]: Map the DataTable columns with that of the database table
+
+                     sqlBulkCopy.ColumnMappings.Add("StudentName", "StudentName");
+                     sqlBulkCopy.ColumnMappings.Add("StudentAge", "StudentAge");
+                     sqlBulkCopy.ColumnMappings.Add("StudentAddress", "StudentAddress");
+                     sqlBulkCopy.ColumnMappings.Add("StudentPhone", "StudentPhone");
+                     sqlBulkCopy.ColumnMappings.Add("StudentEmail", "StudentEmail");
+                     sqlBulkCopy.ColumnMappings.Add("CreatedDateTime", "CreatedDateTime");
+
+                     con.Open();
+                     sqlBulkCopy.WriteToServer(dt);
+                     con.Close();
+                 }
+             }*/
+            var count = dt.Columns.Count;
+
+            List<Student> Studentlist = new List<Student>();
+          
+            Studentlist = CommonMethod.ConvertToList<Student>(dt);
+            _context.Student.AddRange(Studentlist);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
+        }
+    }
+    public static class CommonMethod
+    {
+        public static List<T> ConvertToList<T>(DataTable dt)
+        {
+            var columnNames = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName.ToLower()).ToList();
+            var properties = typeof(T).GetProperties();
+            return dt.AsEnumerable().Select(row => {
+                var objT = Activator.CreateInstance<T>();
+                foreach (var pro in properties)
+                {
+                    if (columnNames.Contains(pro.Name.ToLower()))
+                    {
+                        try
+                        {
+                            pro.SetValue(objT, row[pro.Name]);
+                        }
+                        catch (Exception ex) { }
+                    }
+                }
+                return objT;
+            }).ToList();
+        }
+    }
+
+}   
+

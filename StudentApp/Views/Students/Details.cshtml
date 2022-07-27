@@ -1,54 +1,59 @@
 ﻿@model StudentApp.Models.Student
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "View Student Details";
 }
 
-<h1>Details</h1>
 
-<div>
-    <h4>Student</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentAge)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentAge)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentAddress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentAddress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentPhone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentPhone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentEmail)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentEmail)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDateTime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDateTime)
-        </dd>
-    </dl>
+
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <h2 class="text-info">View Student Details</h2>
+    
+    <div class="col-md-4">
+      <hr />
+        <dl class="row">
+            <dt class = "col-6">
+                @Html.DisplayNameFor(model => model.StudentName)
+            </dt>
+            <dd class = "col-6">
+                @Html.DisplayFor(model => model.StudentName)
+            </dd>
+            <dt class = "col-6">
+                @Html.DisplayNameFor(model => model.StudentAge)
+            </dt>
+            <dd class = "col-6">
+                @Html.DisplayFor(model => model.StudentAge)
+            </dd>
+            <dt class = "col-6">
+                @Html.DisplayNameFor(model => model.StudentAddress)
+            </dt>
+            <dd class = "col-6">
+                @Html.DisplayFor(model => model.StudentAddress)
+            </dd>
+            <dt class = "col-6">
+                @Html.DisplayNameFor(model => model.StudentPhone)
+            </dt>
+            <dd class = "col-6">
+                @Html.DisplayFor(model => model.StudentPhone)
+            </dd>
+            <dt class = "col-6">
+                @Html.DisplayNameFor(model => model.StudentEmail)
+            </dt>
+            <dd class ="col-6">
+                @Html.DisplayFor(model => model.StudentEmail)
+            </dd>
+            <dt class = "col-6">
+                @Html.DisplayNameFor(model => model.CreatedDateTime)
+            </dt>
+            <dd class = "col-6">
+                @Html.DisplayFor(model => model.CreatedDateTime)
+            </dd>
+        </dl>
+         <div class="form-group d-flex flex-row justify-content-between pt-3"> 
+            <a asp-action="Edit" asp-route-id="@Model?.Id"  class="btn btn-primary col-5 ">Edit</a> 
+            <a asp-action="Index" class="btn btn-dark col-5 ">Back to List</a>
+        </div>
+    </div>
+   
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
