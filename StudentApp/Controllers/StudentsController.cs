@@ -227,14 +227,14 @@ namespace StudentApp.Controllers
 
             List<Student> Studentlist = new List<Student>();
           
-            Studentlist = CommonMethod.ConvertToList<Student>(dt);
+            Studentlist = ConvertDatatableToList.ConvertToList<Student>(dt);
             _context.Student.AddRange(Studentlist);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }
     }
-    public static class CommonMethod
+    public static class ConvertDatatableToList
     {
         public static List<T> ConvertToList<T>(DataTable dt)
         {
