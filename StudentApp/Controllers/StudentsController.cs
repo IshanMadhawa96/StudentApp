@@ -1,15 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using StudentApp.Data;
 using StudentApp.Models;
 
 namespace StudentApp.Controllers
 {
+    public class CSVSTUDENT
+    {
+        
+        public string StudentName { get; set; }
+        public int StudentAge { get; set; }
+        public string StudentAddress { get; set; }
+        public int StudentPhone { get; set; }
+        public string StudentEmail { get; set; }
+        public DateTime CreatedDateTime { get; set; }
+    }
     public class StudentsController : Controller //inherting framework class controller
     {
         //IN MICROSOFT DOCUMENTATION 
@@ -18,11 +35,12 @@ namespace StudentApp.Controllers
         //https://www.findandsolve.com/articles/iactionresult-vs-actionresult
         // passing db conex instance via DI
         private readonly ApplicationDbContext _context;
-
+        private readonly IWebHostEnvironment _webHostEnvironment;
         // constructor
-        public StudentsController(ApplicationDbContext context)
+        public StudentsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         //Get All Students
@@ -147,6 +165,56 @@ namespace StudentApp.Controllers
 
             return View(student);
         }
-    }    
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (_context.Student == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Student'  is null.");
+            }
+            var student = await _context.Student.FindAsync(id);
+            if (student != null)
+            {
+                _context.Student.Remove(student);
+            }
 
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        //CSV FILE HANDELING
+        [HttpPost]
+        public async Task<IActionResult> Index(IFormFile postedFile)
+        {
+            string webRootPath = _webHostEnvironment.WebRootPath;
+            string contentRootPath = _webHostEnvironment.ContentRootPath;
+            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "csv", postedFile.FileName);
+            using var fileStream = new FileStream(filePath, FileMode.Create);
+            
+            await postedFile.CopyToAsync(fileStream);
+            fileStream.Close();
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                HasHeaderRecord = false,
+                
+            };
+            using (var reader = new StreamReader(filePath))
+            
+            using (var csv = new CsvReader(reader, config))
+            {
+               
+                //csv.Configuration.HeaderValidated = null;
+                var record = csv.GetRecords<CSVSTUDENT>().ToArray();
+                await _context.AddRangeAsync(record);
+                await _context.SaveChangesAsync();
+                /*_context.Add(student);
+                await _context.SaveChangesAsync();*/
+            }
+           
+           
+            return RedirectToAction(nameof(Index));
+        }
+
+       
+    }   
 }
