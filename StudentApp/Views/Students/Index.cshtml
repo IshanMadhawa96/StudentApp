@@ -12,13 +12,15 @@
      @using (Html.BeginForm("Index", "Students", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
 
+      
           <a asp-action="Create" class="btn btn-info float-end text-white">Add New Student</a>
           <input type="submit"  class="btn btn-success float-end text-white mx-4" value="Upload CSV" />  
-          <input type="file" class="custom-file-input float-end" name="postedFile">
+          <input type="file" class="custom-file-input float-end" required accept=".csv" name="postedFile">
          
-      
+        @Html.ValidationSummary(false, "", new { @class = "alert-danger"})
         
     }
+    
 </p>
 <table class="table table-striped py-4">
     <thead>

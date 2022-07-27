@@ -180,6 +180,15 @@ namespace StudentApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(IFormFile postedFile,Student student)
         {
+            var supportedTypes = new[] { "csv"};
+            var fileExt = System.IO.Path.GetExtension(postedFile.FileName).Substring(1);
+            if(!supportedTypes.Contains(fileExt))
+            {
+                 string message =  "Invaid File";
+                 ModelState.AddModelError("postedFile", message);
+                return RedirectToAction("Index");
+                // return Problem("Entity set 'ApplicationDbContext.Student'  is null.");
+            }
             string webRootPath = _webHostEnvironment.WebRootPath;
             string contentRootPath = _webHostEnvironment.ContentRootPath;
             var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "csv", postedFile.FileName);
@@ -214,30 +223,6 @@ namespace StudentApp.Controllers
                     }
                 }
             }
-
-
-            /* string conString = "Server=(local)\\sqlexpress;Database=StudentDB;Trusted_Connection=True;";
-             using (SqlConnection con = new SqlConnection(conString))
-             {
-                 using (SqlBulkCopy sqlBulkCopy = new SqlBulkCopy(con))
-                 {
-                     //Set the database table name.
-                     sqlBulkCopy.DestinationTableName = "Student";
-
-                     //[OPTIONAL]: Map the DataTable columns with that of the database table
-
-                     sqlBulkCopy.ColumnMappings.Add("StudentName", "StudentName");
-                     sqlBulkCopy.ColumnMappings.Add("StudentAge", "StudentAge");
-                     sqlBulkCopy.ColumnMappings.Add("StudentAddress", "StudentAddress");
-                     sqlBulkCopy.ColumnMappings.Add("StudentPhone", "StudentPhone");
-                     sqlBulkCopy.ColumnMappings.Add("StudentEmail", "StudentEmail");
-                     sqlBulkCopy.ColumnMappings.Add("CreatedDateTime", "CreatedDateTime");
-
-                     con.Open();
-                     sqlBulkCopy.WriteToServer(dt);
-                     con.Close();
-                 }
-             }*/
             var count = dt.Columns.Count;
 
             List<Student> Studentlist = new List<Student>();
@@ -272,6 +257,6 @@ namespace StudentApp.Controllers
             }).ToList();
         }
     }
-
-}   
+    //https://www.c-sharpcorner.com/blogs/converting-datatable-to-model-list2
+}
 
